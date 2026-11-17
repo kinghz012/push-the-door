@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>推开那扇门 · 张仕宽</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; background:#eef1ee;
+    font-family:"Songti SC","STSong","SimSun","Noto Serif CJK SC",serif; color:#1d1d1f; }
+  .tnr { font-family:"Times New Roman","Songti SC",serif; }
+  #viewport { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  #stage { position:relative; width:1280px; height:720px; flex:none; transform-origin:center center;
+    border-radius:6px; overflow:hidden; box-shadow:0 30px 80px rgba(60,80,110,.25); }
+  /* animated gradient background */
+  .bg { position:absolute; inset:0; z-index:0;
+    background:
+      radial-gradient(720px 480px at 12% 8%, rgba(147,183,245,.50), transparent 65%),
+      radial-gradient(760px 520px at 88% 12%, rgba(251,196,226,.48), transparent 65%),
+      radial-gradient(820px 560px at 50% 108%, rgba(168,224,186,.52), transparent 65%),
+      linear-gradient(160deg, #fbfcfe 0%, #f6faf6 55%, #fdf7fa 100%);
+    animation:bgdrift 16s ease-in-out infinite alternate; }
+  @keyframes bgdrift { from { filter:hue-rotate(0deg) brightness(1); } to { filter:hue-rotate(-8deg) brightness(1.03); } }
+  .slide { position:absolute; inset:0; z-index:1; padding:54px 64px 60px; opacity:0; visibility:hidden;
+    transform:translateX(46px) scale(.995); transition:opacity .65s ease, transform .65s cubic-bezier(.22,.8,.3,1), visibility 0s .65s; }
+  .slide.active { opacity:1; visibility:visible; transform:none; transition:opacity .65s ease, transform .65s cubic-bezier(.22,.8,.3,1); }
+  .slide.before { transform:translateX(-46px) scale(.995); }
+  .rise { opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.22,.8,.3,1); }
+  .slide.active .rise { opacity:1; transform:none; }
+  .slide.active .d1 { transition-delay:.08s } .slide.active .d2 { transition-delay:.20s }
+  .slide.active .d3 { transition-delay:.34s } .slide.active .d4 { transition-delay:.48s }
+  .slide.active .d5 { transition-delay:.62s } .slide.active .d6 { transition-delay:.76s }
+  .slide.active .d7 { transition-delay:.90s } .slide.active .d8 { transition-delay:1.04s }
+  .glass { background:rgba(255,255,255,.55); -webkit-backdrop-filter:blur(18px) saturate(1.5); backdrop-filter:blur(18px) saturate(1.5);
+    border:1px solid rgba(255,255,255,.75); border-radius:20px; box-shadow:0 14px 34px rgba(80,100,140,.13), inset 0 1px 0 rgba(255,255,255,.8); }
+  .ptitle { font-size:47px; font-weight:700; letter-spacing:.06em; line-height:1.15; }
+  .grad-text { background:linear-gradient(92deg,#4C72B0 0%,#3E9271 52%,#D96FAE 105%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .psub { font-size:19px; color:#3c4a42; margin-top:10px; letter-spacing:.04em; }
+  .src { font-size:11.5px; color:#8a938c; line-height:1.5; }
+  .quote { font-size:21px; line-height:1.65; }
+  .small { font-size:14.5px; line-height:1.6; color:#3c4a42; }
+  .tiny { font-size:12.5px; color:#6b756d; line-height:1.55; }
+  .tag { display:inline-block; padding:3px 12px; border-radius:999px; font-size:13px; letter-spacing:.14em;
+    background:rgba(255,255,255,.65); border:1px solid rgba(255,255,255,.8); color:#41604a; box-shadow:0 4px 14px rgba(80,100,140,.10); }
+  .num { font-family:"Times New Roman",serif; }
+  /* nav */
+  #progress { position:absolute; top:0; left:0; height:4px; z-index:5; width:0%;
+    background:linear-gradient(90deg,#4C72B0,#3E9271,#E78AC3); transition:width .5s ease; border-radius:0 4px 4px 0; }
+  #hud { position:absolute; right:22px; bottom:16px; z-index:6; display:flex; align-items:center; gap:12px; }
+  #counter { font-family:"Times New Roman",serif; font-size:13px; color:#5c665f; letter-spacing:.12em; }
+  .navbtn { width:34px; height:34px; border-radius:50%; border:1px solid rgba(255,255,255,.8); cursor:pointer;
+    background:rgba(255,255,255,.6); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    color:#41604a; font-size:15px; box-shadow:0 6px 16px rgba(80,100,140,.14); }
+  .navbtn:hover { background:rgba(255,255,255,.9); }
+  #dots { position:absolute; left:22px; bottom:22px; z-index:6; display:flex; gap:7px; }
+  .dot { width:7px; height:7px; border-radius:50%; background:rgba(90,110,95,.28); cursor:pointer; transition:all .3s; }
+  .dot.on { width:22px; border-radius:99px; background:linear-gradient(90deg,#4C72B0,#3E9271); }
+  .ph-note { position:absolute; z-index:6; left:64px; bottom:16px; font-size:11px; color:#9aa39c; }
+  img.photo { object-fit:cover; border-radius:16px; box-shadow:0 14px 30px rgba(80,100,140,.18); border:1px solid rgba(255,255,255,.7); }
+  .phslot { border:1.5px dashed rgba(90,120,100,.45); border-radius:16px; display:flex; align-items:center; justify-content:center;
+    color:#7d8a80; font-size:13px; letter-spacing:.1em; background:rgba(255,255,255,.35); text-align:center; padding:8px; }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+  <div class="bg"></div>
+  <div id="progress"></div>
+
+<!-- 1 封面 -->
+<section class="slide active">
+  <div style="display:flex; height:100%; align-items:center; gap:44px;">
+    <div style="flex:1.15;">
+      <div class="rise d1"><span class="tag">追光而行 · 光而不耀</span></div>
+      <div class="rise d2 ptitle" style="font-size:76px; margin-top:26px;">推开那扇门</div>
+      <div class="rise d3" style="font-size:24px; margin-top:20px; color:#2f4237; letter-spacing:.05em;">一束光穿过棱镜，回到本我</div>
+      <div class="rise d4 glass" style="margin-top:34px; padding:20px 26px; max-width:430px;">
+        <div style="font-size:15px; color:#6b756d; letter-spacing:.2em;">我的定位</div>
+        <div style="font-size:30px; margin-top:8px;">平淡，但热情</div>
+      </div>
+      <div class="rise d5 src" style="margin-top:30px;">张仕宽 · 西安欧亚学院会计金融学院 审计学（统本审计 2503 班）<br>一个审计专业大二学生的自我管理练习</div>
+    </div>
+    <div class="rise d3" style="flex:.95;">
+      <img class="photo" src="assets/prism.jpg" alt="棱镜折射光谱" style="width:100%; height:470px;">
+      <div class="src" style="margin-top:10px; text-align:right;">光从这里开始</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 推门而入 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">第一束光</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">推门而入</div>
+  <div class="rise d2 psub">一束光射进来 · 2026 年 10 月 8 日 19:00 · 德鲁克书房 · 相约星期四素读会第九期</div>
+  <div style="display:flex; gap:30px; margin-top:26px;">
+    <div style="flex:1.05;" class="rise d3">
+      <img class="photo" src="assets/gathering.jpg" alt="素读会现场" style="width:100%; height:342px;">
+      <div class="src" style="margin-top:8px;">素读会现场（真实照片）</div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
+      <div class="glass rise d3" style="padding:16px 20px;"><div class="quote" style="font-size:19px;">「推开德鲁克书房的门时，其实心里是有些忐忑的。」</div></div>
+      <div class="glass rise d4" style="padding:16px 20px;"><div class="quote" style="font-size:19px;">小杜在会上说：「欢迎仕宽。」</div></div>
+      <div class="glass rise d5" style="padding:16px 20px;"><div style="font-size:17.5px; line-height:1.65;">「棱镜拆光的前提是，你得先有光射进来。<b>素读会就是那束光之一。</b>」</div></div>
+      <div class="rise d6" style="display:flex; justify-content:space-between; align-items:baseline;">
+        <span class="tiny">点燃了我，再选一个不易起火的阴雨天。</span>
+        <span style="font-size:17px;">「下一次星期四，我尽量还来。」</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 镜折万光 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">我是谁</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">镜折万光</div>
+  <div class="rise d2 psub">光穿过棱镜，会折射成不同的颜色；人走过不同的场域，会留下不同的名字</div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:13px; margin-top:24px;">
+    <div class="glass rise d2" style="padding:14px 20px; font-size:17.5px;">统本审计 2503 班副班长 · 晨读助理 · 2026 年迎新导生</div>
+    <div class="glass rise d3" style="padding:14px 20px; font-size:17.5px;">会计金融学院英语学习联络员</div>
+    <div class="glass rise d3" style="padding:14px 20px; font-size:17.5px;">环球英语辩论社副社长 · 高考招生省外负责人</div>
+    <div class="glass rise d4" style="padding:14px 20px; font-size:17.5px;">腾讯云 AI 校园大使 · 玻尔 AI4S 校园大使</div>
+    <div class="glass rise d4" style="padding:14px 20px; font-size:17.5px;">挑战杯项目组长 · 学术英语海报展作品组长</div>
+    <div class="glass rise d5" style="padding:14px 20px; font-size:17.5px;">全国大学生智能审计技能竞赛校队队员 · 审计专员 1</div>
+    <div class="glass rise d5" style="padding:14px 20px; font-size:17.5px;">EI 会议论文第一作者 · 软件著作权共同著作权人</div>
+    <div class="glass rise d6" style="padding:14px 20px; font-size:17.5px;">工审 Π 联合工作室运营 · 星火计划二期 · 素读会成员</div>
+  </div>
+  <div class="rise d7" style="margin-top:26px; text-align:center;">
+    <span style="font-size:26px; letter-spacing:.03em;">能力越多，越要说清楚自己是谁。<span class="grad-text" style="font-weight:700;">你到底要为谁，解决哪一个问题。</span></span>
+  </div>
+</section>
+
+<!-- 4 积微成著 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">成绩单</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">积微成著</div>
+  <div class="rise d2 psub">长处的外在证据 · 数字只报一遍</div>
+  <div style="display:flex; gap:28px; margin-top:22px;">
+    <div class="glass rise d3" style="flex:1.5; padding:20px 24px; font-size:15.5px; line-height:1.95;">
+      全国大学生商科综合能力大赛全国总决赛二等奖（微光队）<br>
+      第七届外研社英语辩论新手赛二等奖 · 智能审计技能竞赛全国选拔赛二等奖<br>
+      美国大学生数学建模竞赛（ICM）成功参赛奖 · 数维杯国际赛（IMCM）成功参赛奖<br>
+      「融贯古今」翻译百科知识竞赛全国三等奖 · 全国高校大学英语听力大赛一等奖<br>
+      「外研社 · 国才杯」地区复赛、全国决赛优秀志愿者<br>
+      全国大学生数学建模竞赛陕西省一等奖（公示中，证书待下发）<br>
+      校级优秀学生干部 · 国才杯校内选拔赛二等奖、季军 · 英语 Vlog 大赛最佳微光奖<br>
+      英语晨读「晨读之星」（分院级）
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:13px;">
+      <div class="glass rise d4" style="padding:16px 20px; text-align:center;">
+        <div style="font-size:15px; color:#6b756d; letter-spacing:.14em;">分级统计</div>
+        <div style="font-size:19px; margin-top:8px; line-height:1.9;">国际级 <b class="num" style="font-size:24px;">2</b> · 国家级 <b class="num" style="font-size:24px;">7</b><br>省级 <b class="num" style="font-size:24px;">1</b> · 校级 <b class="num" style="font-size:24px;">7</b> · 分院级 <b class="num" style="font-size:24px;">1</b></div>
+      </div>
+      <div class="glass rise d5" style="padding:16px 20px; font-size:15px; line-height:1.8;">
+        <b>学术成果</b>（与奖项分开）<br>EI 会议论文录用 · 第一作者（ICAICA 2026）<br>软件著作权《轴承与动力装备寿命统计预测软件》V1.0
+      </div>
+      <div class="rise d6 tiny">班级集体荣誉另计：优秀晨读班级、最佳支持班级、班级 LOGO 设计大赛三等奖、优良学风班（2503 班集体）</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 证外有光 -->
+<section class="slide">
+  <div style="height:100%; display:flex; flex-direction:column; justify-content:center; max-width:980px; margin:0 auto;">
+    <div class="rise d1" style="text-align:center;"><span class="tag">转折</span></div>
+    <div class="rise d2 ptitle grad-text" style="text-align:center; margin-top:16px;">证外有光</div>
+    <div class="glass rise d3" style="margin-top:30px; padding:30px 38px; text-align:center;">
+      <div class="quote" style="font-size:25px;">「很多东西写不进简历，也加不了综测，但是它们已经融入我的生命里，组成现在勇敢的自己。」</div>
+      <div class="src" style="margin-top:12px;">—— @诸葛钢铁</div>
+    </div>
+    <div style="display:flex; gap:22px; margin-top:22px; align-items:stretch;">
+      <div class="glass rise d4" style="flex:1.4; padding:20px 24px;">
+        <div style="font-size:17.5px; line-height:1.75;">软件著作权证书下来那天，我先想起的，是开学分享会上一个新生跑来说的话：<br><b>「学长，听你讲完，我敢报辩论了。」</b></div>
+        <div style="font-size:16.5px; margin-top:10px; color:#2f4237;">证书是我自己的光，可它照不亮别人。比起这张证书，我更记得那句话。</div>
+      </div>
+      <div class="rise d5" style="flex:.6;">
+        <img class="photo" src="assets/softcert.jpg" alt="软件著作权证书" style="width:100%; height:196px;">
+        <div class="src" style="margin-top:6px; text-align:right;">软件著作权证书</div>
+      </div>
+    </div>
+    <div class="rise d6" style="margin-top:20px; display:flex; justify-content:space-between;">
+      <span class="tiny">如果生命是橘瓣脉络，苦涩而自得其所。</span>
+      <span class="tiny">经历本身，即是答案。 · 荧火星光，也可以照亮。</span>
+    </div>
+  </div>
+</section>
+
+<!-- 6 预期在先 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">我的长处</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">预期在先</div>
+  <div class="rise d2 psub">一次真实的反馈分析 · 德鲁克《自我管理》</div>
+  <div style="display:flex; gap:14px; margin-top:24px;">
+    <div class="glass rise d2" style="flex:1; padding:18px;"><div class="num" style="font-size:26px; color:#4C72B0;">70 → 8</div><div class="small" style="margin-top:6px;">建了 70 人的微信群，做海报、转朋友圈，选《德鲁克导览》课的只有 8 个人</div></div>
+    <div class="glass rise d3" style="flex:1; padding:18px;"><div style="font-size:19px;">KK 老师点拨</div><div class="small" style="margin-top:6px;">「你一直在讲"卖点"，但没考虑过"买点"。」</div></div>
+    <div class="glass rise d4" style="flex:1; padding:18px;"><div style="font-size:19px;">换打法</div><div class="small" style="margin-top:6px;">不再填鸭式强推，潜移默化，让课程价值自己说话</div></div>
+    <div class="glass rise d5" style="flex:1; padding:18px;"><div class="num" style="font-size:26px; color:#3E9271;">20+</div><div class="small" style="margin-top:6px;">选课人数涨到 20 多个</div></div>
+  </div>
+  <div class="glass rise d6" style="margin-top:18px; padding:18px 24px;">
+    <div style="font-size:16.5px; line-height:1.7;">「每当一个人在做出关键决策的时候，以及采取关键行动的时候，就写下自己预期会发生的结果。9 到 12 个月后，对照实际结果与当初预期进行反馈。」</div>
+    <div class="src" style="margin-top:6px;">反馈分析法 · 德鲁克《自我管理》</div>
+  </div>
+  <div class="rise d7" style="margin-top:18px; font-size:20px; text-align:center;">验出来的三条长处：<b>把散的东西整合成成品</b> · <b>从外部识别需求</b> · <b>链接人，愿意给别人搭台</b></div>
+  <div class="rise d8 tiny" style="margin-top:12px; text-align:center;">梅斯特五类业务开发：前两项解决被看见，后三项解决被信任——招课的转折，正落在这里 · 赛前没写预期的那次，215.4 分刷新分院纪录，却没晋级</div>
+</section>
+
+<!-- 7 揽镜自照 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">我的价值观</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">揽镜自照</div>
+  <div class="rise d2 psub">价值观是且应当是最终的检验标准 · 德鲁克《自我管理》</div>
+  <div style="display:flex; gap:26px; margin-top:24px;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
+      <div class="glass rise d3" style="padding:18px 22px;"><div style="font-size:17.5px; line-height:1.7;">有一阵子，周五晚上 8 点才吃上那一天的第一顿饭，感冒刚好还在硬撑。</div>
+        <div class="small" style="margin-top:8px;">可欣：「看到伙伴的同时也要看到自己，自己的身体，这样才能更长久。」小杜的建议：做一些减法。</div></div>
+      <div class="glass rise d4" style="padding:18px 22px;"><div style="font-size:17.5px; line-height:1.7;">「我想在镜子里看到一个怎样的人？一个能看见伙伴也能看见自己的人，不把所有事都扛在身上。」</div></div>
+      <div class="rise d5 tiny">声誉不是广告，是一次次稳定的交付。 · 一想到我不会融化，周遭烈火便是锻造。</div>
+    </div>
+    <div class="glass rise d5" style="flex:.92; padding:22px 26px;">
+      <div style="font-size:19px; letter-spacing:.1em; color:#41604a;">不做清单</div>
+      <div style="font-size:17.5px; line-height:2.05; margin-top:10px;">
+        一、不做纯整合、纯翻译、纯排版的免费兜底<br>
+        二、不替朝令夕改的决策内耗<br>
+        三、不再用"完美"绑架自己
+      </div>
+      <div class="small" style="margin-top:14px;">先决定不做什么，做什么才有底气。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 蜕旧生新 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">我属于哪里</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">蜕旧生新</div>
+  <div class="rise d2 psub">重塑：把自己改变成和以往不同 · 《重塑个体》</div>
+  <div class="glass rise d3" style="margin-top:22px; padding:8px 26px;">
+    <table style="width:100%; border-collapse:collapse; font-size:16.5px; line-height:1.55;">
+      <tr style="border-bottom:1px solid rgba(120,140,125,.18);"><td style="padding:11px 10px; width:50%; color:#5c665f;">靠声音大、覆盖广、冲得快，旧打法套到新事情上</td><td style="padding:11px 10px;">先停下来问：这个位置真正需要我干什么</td></tr>
+      <tr style="border-bottom:1px solid rgba(120,140,125,.18);"><td style="padding:11px 10px; color:#5c665f;">想做六边形战士，忙着补短板</td><td style="padding:11px 10px;">把能量给长处；短处绕开，或交给更合适的伙伴</td></tr>
+      <tr style="border-bottom:1px solid rgba(120,140,125,.18);"><td style="padding:11px 10px; color:#5c665f;">看到伙伴的稿子不到位，第一反应是"我来改吧"</td><td style="padding:11px 10px;">先交回作者，把判断还给作者</td></tr>
+      <tr style="border-bottom:1px solid rgba(120,140,125,.18);"><td style="padding:11px 10px; color:#5c665f;">盯着没来的人，纠结为什么付出没有回报</td><td style="padding:11px 10px;">看已经来的七八个人，先把在场的人照顾好</td></tr>
+      <tr><td style="padding:11px 10px; color:#5c665f;">感冒发烧还硬撑，周五晚 8 点吃第一顿饭</td><td style="padding:11px 10px;">给自己写下吃饭承诺，连续记录一周第一顿饭的时间</td></tr>
+    </table>
+  </div>
+  <div class="rise d5" style="margin-top:22px; display:flex; justify-content:space-between; align-items:baseline;">
+    <span style="font-size:23px;">不要预测未来，<span class="grad-text" style="font-weight:700;">而去创造未来。</span></span>
+    <span class="tiny">经历的意义在于引导你，而非定义你。</span>
+  </div>
+</section>
+
+<!-- 9 谱分五彩 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">我的贡献</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">谱分五彩</div>
+  <div class="rise d2 psub">一束白光折成五道光谱，每一道光里，都站着一群人</div>
+  <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:13px; margin-top:20px;">
+    <div class="glass rise d2" style="padding:0; overflow:hidden;">
+      <div style="height:6px; background:#4C72B0;"></div>
+      <img class="photo" src="assets/study-group.jpg" style="width:100%; height:104px; border-radius:0; box-shadow:none; border:none;">
+      <div style="padding:12px 14px;">
+        <div style="font-size:18px; font-weight:700;">学业之光</div>
+        <div class="small" style="margin-top:5px;">EI 论文第一作者、软件著作权共同著作权人</div>
+        <div class="tiny" style="margin-top:7px;">伙伴：KK、小杜、北北、西西、卢老师、月亮、子豪、可欣、小何、鸿洁、一荻、佳彬、小华、南南、Helen、范志德、高思语、刘之嘉、关悦、李何嘉琦、韩欣汝、紫昕、琪媛</div>
+      </div>
+    </div>
+    <div class="glass rise d3" style="padding:0; overflow:hidden;">
+      <div style="height:6px; background:#8DA0CB;"></div>
+      <img class="photo" src="assets/competition.jpg" style="width:100%; height:104px; border-radius:0; box-shadow:none; border:none;">
+      <div style="padding:12px 14px;">
+        <div style="font-size:18px; font-weight:700;">竞赛之光</div>
+        <div class="small" style="margin-top:5px;">辩论社获外研社全国高校英语辩论社团认证；智能审计校队，12 月赴广东打总决赛</div>
+        <div class="tiny" style="margin-top:7px;">伙伴：徐梓芮（微光队）、智能审计校队队友、卢劲宇与胡波（数维杯队友）</div>
+      </div>
+    </div>
+    <div class="glass rise d4" style="padding:0; overflow:hidden;">
+      <div style="height:6px; background:#E78AC3;"></div>
+      <img class="photo" src="assets/international.jpg" style="width:100%; height:104px; border-radius:0; box-shadow:none; border:none;">
+      <div style="padding:12px 14px;">
+        <div style="font-size:18px; font-weight:700;">国际之光</div>
+        <div class="small" style="margin-top:5px;">带剑桥交流生跑活动；一个拍脸的动作让我读懂，帮人要先经他人许可</div>
+        <div class="tiny" style="margin-top:7px;">伙伴：Patricia Ribca SALIM（模联代表团）、剑桥交流生与留学生伙伴</div>
+      </div>
+    </div>
+    <div class="glass rise d5" style="padding:0; overflow:hidden;">
+      <div style="height:6px; background:#F2B8D8;"></div>
+      <div class="phslot" style="height:104px; border:none; border-radius:0;">晨读分享会 · 配图待补</div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:18px; font-weight:700;">服务之光</div>
+        <div class="small" style="margin-top:5px;">晨读改革：把盯人催打卡，改成让大家自己选读什么、怎么读</div>
+        <div class="tiny" style="margin-top:7px;">伙伴：马怡清、安雨涵（2503 班班委）、晨读助理团队</div>
+      </div>
+    </div>
+    <div class="glass rise d6" style="padding:0; overflow:hidden;">
+      <div style="height:6px; background:#F39B3C;"></div>
+      <div class="phslot" style="height:104px; border:none; border-radius:0;">迎新晚会后台 · 配图待补</div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:18px; font-weight:700;">志愿之光</div>
+        <div class="small" style="margin-top:5px;">2026 年迎新导生；迎新晚会连续四天守后台，宿舍四人全员在后台</div>
+        <div class="tiny" style="margin-top:7px;">伙伴：宿舍四位伙伴、迎新导生团队</div>
+      </div>
+    </div>
+  </div>
+  <div class="glass rise d7" style="margin-top:16px; padding:15px 24px; text-align:center;">
+    <span style="font-size:17.5px;">「前面那四道光，最后都该折向同一个方向：<b>去照亮别人。</b>」</span>
+  </div>
+</section>
+
+<!-- 10 和而不同 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">维系关系的责任</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">和而不同</div>
+  <div class="rise d2 psub">西安欧亚学院校训 · 「不同」是独立判断，「和」是对话协商</div>
+  <div style="display:flex; gap:26px; margin-top:22px;">
+    <div style="flex:1.05;" class="rise d3">
+      <img class="photo" src="assets/colearn.jpg" alt="星火共学现场" style="width:100%; height:318px;">
+      <div class="src" style="margin-top:8px;">星火共学现场（真实照片）</div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:13px;">
+      <div class="glass rise d3" style="padding:15px 20px;"><div style="font-size:17px; line-height:1.65;">「一场好的共学，不是领读者一个人闪闪发光，而是他<b>把光分给在场每一个人</b>。」</div></div>
+      <div class="glass rise d4" style="padding:15px 20px;"><div style="font-size:17px; line-height:1.65;">北北：「一群人因为一个目的聚在一起，用自己的长处为别人的短处负责，这才是生态。」</div></div>
+      <div class="glass rise d5" style="padding:15px 20px;"><div style="font-size:17px; line-height:1.65;">一荻：「长处不是长在我身上的东西，是长在我和这件事、这群人的关系里的东西。」</div></div>
+      <div class="rise d6" style="font-size:16.5px;">让世界相遇，让不同的声音彼此看见。</div>
+    </div>
+  </div>
+  <div class="rise d7" style="margin-top:16px; text-align:center; font-size:16.5px; color:#3c4a42;">一亩良田，万亩花开。各花各有各花香，找到属于自己的土壤，开出属于自己的花。</div>
+</section>
+
+<!-- 11 借镜观形 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">他人这面镜子</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">借镜观形</div>
+  <div class="rise d2 psub">别人眼中的我 · 这一年，伙伴们替我做了一次反馈分析</div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:30px;">
+    <div class="glass rise d2" style="padding:26px 28px;"><div class="quote">「仕宽一定是第一个，最先看见伙伴的人。」</div><div class="src" style="margin-top:10px;">—— 贺一荻 · 2026 年 9 月 16 日共学整体回应</div></div>
+    <div class="glass rise d3" style="padding:26px 28px;"><div class="quote">「他是真正愿意去帮助别人的人。」</div><div class="src" style="margin-top:10px;">—— 杜永光（小杜）· 同场共学</div></div>
+    <div class="glass rise d4" style="padding:26px 28px;"><div class="quote">「很不一样的小伙子，思考很深。」</div><div class="src" style="margin-top:10px;">—— Helen · 第一次旁听之后</div></div>
+    <div class="glass rise d5" style="padding:26px 28px;"><div class="quote">「仕宽需要的不是被看见，是被理解。」</div><div class="src" style="margin-top:10px;">—— KK · 2026 年 10 月 3 日共学</div></div>
+  </div>
+  <div class="rise d6" style="margin-top:26px; text-align:center; font-size:17px; color:#3c4a42;">这些话不是我给自己贴的标签。自我的判断会骗人，伙伴的话不会。</div>
+</section>
+
+<!-- 12 扎根今日 -->
+<section class="slide">
+  <div class="rise d1"><span class="tag">还在路上</span></div>
+  <div class="rise d1 ptitle grad-text" style="margin-top:14px;">扎根今日</div>
+  <div class="rise d2 psub">在盛大与渺小间，得以窥见自我</div>
+  <div style="display:flex; gap:26px; margin-top:24px;">
+    <div class="glass rise d3" style="flex:1.25; padding:22px 26px;">
+      <div style="font-size:18px; letter-spacing:.1em; color:#41604a;">待补清单（自列）</div>
+      <div style="font-size:17px; line-height:1.65; margin-top:12px;">
+        ☐ <b>系统的德鲁克知识</b>：现在是碎片式读、分享式读，还没有每天读一篇、定期重复的节奏<br>
+        ☐ <b>AI 工作台和知识库搭建</b>：离用 AI 搭一个自己的工作台还差很远<br>
+        ☐ <b>时间记录</b>：忙是忙，从来没认真记过时间花在哪<br>
+        ☐ <b>战略取舍的勇气</b>：发现机会不难，难的是决定不做什么
+      </div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
+      <div class="glass rise d4" style="padding:20px 24px;"><div style="font-size:18px; line-height:1.75;">「与其焦虑地追赶明天，不如像树一样把根扎进今天，相信时间的力量。静候花开，自有其时。是否能像一棵树一样，坚毅又盎然。」</div></div>
+      <div class="rise d5 small">清单上的四件事，没有一件是课堂能直接给的。教育的主体是人，剩下的路，要靠自己学。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 万光归一 -->
+<section class="slide">
+  <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <div class="rise d1" style="display:flex; gap:8px;">
+      <span style="width:64px; height:5px; border-radius:99px; background:#4C72B0;"></span>
+      <span style="width:64px; height:5px; border-radius:99px; background:#8DA0CB;"></span>
+      <span style="width:64px; height:5px; border-radius:99px; background:#E78AC3;"></span>
+      <span style="width:64px; height:5px; border-radius:99px; background:#F2B8D8;"></span>
+      <span style="width:64px; height:5px; border-radius:99px; background:#F39B3C;"></span>
+    </div>
+    <div class="rise d2 ptitle" style="margin-top:30px; font-size:54px;">万光归一</div>
+    <div class="rise d3" style="margin-top:12px; font-size:19px; color:#3c4a42;">五道光谱，重新汇成一束白光</div>
+    <div class="glass rise d4" style="margin-top:30px; padding:28px 44px;">
+      <div style="font-size:31px; letter-spacing:.02em;">要学会接受不完美的自己，<span class="grad-text" style="font-weight:700;">撕掉标签，成为本我。</span></div>
+    </div>
+    <div class="rise d5" style="margin-top:28px; font-size:21px; letter-spacing:.14em;">追寻光 · 靠近光 · 成为光 · 散发光</div>
+    <div class="rise d6 small" style="margin-top:16px; max-width:760px;">希望被记住什么？我的答案还在写：不在奖项清单里，在影响过谁的生命里。</div>
+    <div class="rise d7 tiny" style="margin-top:10px;">「世界正在我眼前自行展开，我觉得我能去任何地方，做任何事情，成为任何人。」</div>
+    <div class="rise d8" style="margin-top:24px; font-size:18px;">「难过，但我不会停下。」</div>
+    <div class="rise d8 src" style="margin-top:14px;">谢谢大家 · 张仕宽</div>
+  </div>
+</section>
+
+  <div id="dots"></div>
+  <div id="hud">
+    <button class="navbtn" id="prev" aria-label="上一页">‹</button>
+    <span id="counter">1 / 13</span>
+    <button class="navbtn" id="next" aria-label="下一页">›</button>
+  </div>
+</div>
+</div>
+<script>
+  const stage = document.getElementById('stage');
+  function fit(){ const s = Math.min(innerWidth/1280, innerHeight/720) * 0.985; stage.style.transform = 'scale(' + s + ')'; }
+  addEventListener('resize', fit); fit();
+  const slides = [...document.querySelectorAll('.slide')];
+  const dotsBox = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  let cur = 0;
+  slides.forEach((_, i) => { const d = document.createElement('div'); d.className = 'dot' + (i===0?' on':''); d.onclick = () => go(i); dotsBox.appendChild(d); });
+  const dots = [...dotsBox.children];
+  function go(n){
+    n = Math.max(0, Math.min(slides.length-1, n));
+    slides[cur].classList.remove('active'); slides[cur].classList.toggle('before', n < cur);
+    cur = n;
+    slides[cur].classList.add('active'); slides[cur].classList.remove('before');
+    dots.forEach((d,i)=>d.classList.toggle('on', i===cur));
+    counter.textContent = (cur+1) + ' / ' + slides.length;
+    progress.style.width = ((cur+1)/slides.length*100) + '%';
+  }
+  document.getElementById('next').onclick = () => go(cur+1);
+  document.getElementById('prev').onclick = () => go(cur-1);
+  addEventListener('keydown', e => {
+    if (e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown') go(cur+1);
+    if (e.key==='ArrowLeft' || e.key==='PageUp') go(cur-1);
+    if (e.key==='Home') go(0); if (e.key==='End') go(slides.length-1);
+  });
+  let tx = null;
+  addEventListener('touchstart', e => tx = e.touches[0].clientX, {passive:true});
+  addEventListener('touchend', e => { if (tx===null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 48) go(cur + (dx<0?1:-1)); tx = null; }, {passive:true});
+  stage.addEventListener('click', e => { if (e.target.closest('#hud') || e.target.closest('#dots')) return; const r = stage.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; if (x > .72) go(cur+1); else if (x < .12) go(cur-1); });
+  go(0);
+</script>
+</body>
+</html>
